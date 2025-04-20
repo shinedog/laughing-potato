@@ -1,7 +1,14 @@
 {
- "pulls": {
-     "type": "github_refs",
-     "value": "shinedog laughing-potato heads - ",
-     "emailresponsible": false
-   }
+   "main": {
+        "enabled": 1,
+        "type": 1,
+        "hidden": false,
+        "description": "Build main branch",
+        "flake": "git@github.com/shinedog/laughing-potato?ref=main",
+        "checkinterval": 60,
+        "schedulingshares": 10,
+        "enableemail": false,
+        "emailoverride": "",
+        "keepnr": 1
+    }
 }
