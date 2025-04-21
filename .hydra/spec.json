@@ -15,7 +15,7 @@
         "enabled": 1,
         "type": 1,
         "hidden": false,
-        "description": "Build main branch",
+        "description": "Build declarative branch",
         "flake": "git+ssh://git@github.com/shinedog/laughing-potato declarative",
         "checkinterval": 60,
         "schedulingshares": 10,
