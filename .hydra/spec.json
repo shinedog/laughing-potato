@@ -12,7 +12,7 @@
   "type": 0,
   "inputs": {
     "nixexpr": {
-      "value": "https://github.com/shinedog/laughing-potato main",
+      "value": "https://github.com/shinedog/laughing-potato declarative",
       "type": "git",
       "emailresponsible": false
     },
