@@ -7,7 +7,7 @@
       "enabled": true,
       "groupBy": "ref",
       "flake": {
-        "url": "git+https://github.com/shinedog/laughing-potato.git",
+        "url": "https://github.com/shinedog/laughing-potato.git",
         "inputs": {},
         "outputs": {
           "hydraJobs.*.mergeCheck": {},
