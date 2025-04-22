@@ -7,7 +7,7 @@
       "enabled": true,
       "groupBy": "ref",
       "flake": {
-        "url": "https://github.com/shinedog/laughing-potato.git",
+        "url": "git+ssh://git@github.com/shinedog/laughing-potato shinedog-patch-1",
         "inputs": {},
         "outputs": {
           "hydraJobs.*.mergeCheck": {},
@@ -21,7 +21,7 @@
   },
   "triggers": {
     "type": "git",
-    "url": "https://github.com/shinedog/laughing-potato.git",
+    "url": "git+ssh://git@github.com/shinedog/laughing-potato shinedog-patch-1",
     "refspecs": [
       "+refs/heads/*:refs/remotes/origin/*",
       "+refs/pull/*/head:refs/remotes/origin/pr/*"
