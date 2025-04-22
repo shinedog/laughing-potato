@@ -1,0 +1,30 @@
+{
+  "project": "my-repo",
+  "description": "Hydra auto-merge system",
+  "jobsets": {
+    "merge-check": {
+      "type": "flake",
+      "enabled": true,
+      "groupBy": "ref",
+      "flake": {
+        "url": "git+https://github.com/shinedog/my-repo.git",
+        "inputs": {},
+        "outputs": {
+          "hydraJobs.*.mergeCheck": {},
+          "hydraJobs.*.mergePR": {}
+        }
+      }
+    }
+  },
+  "inputs": {
+    "systems": ["x86_64-linux"]
+  },
+  "triggers": {
+    "type": "git",
+    "url": "https://github.com/shinedog/my-repo.git",
+    "refspecs": [
+      "+refs/heads/*:refs/remotes/origin/*",
+      "+refs/pull/*/head:refs/remotes/origin/pr/*"
+    ]
+  }
+}
