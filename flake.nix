@@ -8,8 +8,12 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
 
-      ref = builtins.getEnv "HYDRA_REF";  # Hydra passes this via groupBy=ref
-      prNumber = builtins.elemAt (builtins.split "/" ref) 1;
+      # Extract ref from Git metadata
+      refPath = builtins.readFile ./.git/HEAD or "refs/heads/main"; # fallback for testing
+      ref = builtins.elemAt (builtins.splitString "/" refPath) 2 or "main";
+      prNumber = ref; # use "42" if ref = "pr/42"
+
+      gitRemote = "git+https://github.com/shinedog/laughing-potato";
 
       mergeCheck = pkgs.runCommand "merge-check-${prNumber}" {
         nativeBuildInputs = [ pkgs.git pkgs.nix ];
@@ -19,17 +23,17 @@
         mkdir work
         cd work
         git init
-        git remote add origin ${self}
+        git remote add origin ${gitRemote}
         git fetch origin main
         git checkout -b main FETCH_HEAD
 
-        git fetch origin ${ref}
+        git fetch origin refs/pull/${prNumber}/head
         if ! git merge --no-commit --no-ff FETCH_HEAD; then
           echo "Merge conflict"
           exit 1
         fi
 
-        nix build ${self}#nixosConfigurations.exampleHost.config.system.build.toplevel
+        nix build ${gitRemote}#nixosConfigurations.exampleHost.config.system.build.toplevel
         echo "Success" > $out
       '';
 
