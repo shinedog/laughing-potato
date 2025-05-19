@@ -10,8 +10,7 @@
         "url": "git+ssh://git@github.com/shinedog/laughing-potato",
         "inputs": {},
         "outputs": {
-          "hydraJobs.mergeCheck": {},
-          "hydraJobs.mergePR": {}
+          "hydraJobs.mergeCheck": {}
         }
       }
     }
