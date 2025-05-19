@@ -1,21 +1,17 @@
 {
-  description = "Fallback Hydra flake for merge-check";
+  description = "Hydra fallback flake";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
 
-  outputs = { nixpkgs, ... }:
+  outputs = { nixpkgs, ... }: 
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-
-      mergeCheck = pkgs.runCommand "merge-check-fallback" {
-        nativeBuildInputs = [ pkgs.coreutils ];
-      } ''
-        echo "Hydra fallback job executed successfully." > $out
-      '';
     in {
       hydraJobs = {
-        mergeCheck = mergeCheck;
+        mergeCheck = pkgs.runCommand "merge-check" {} ''
+          echo ok > $out
+        '';
       };
     };
 }
