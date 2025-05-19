@@ -1,0 +1,25 @@
+{
+  "project": "ai-defined",
+  "description": "Hydra static branch test",
+  "jobsets": {
+    "merge-check": {
+      "type": "flake",
+      "enabled": true,
+      "flake": {
+        "url": "git+ssh://git@github.com/shinedog/laughing-potato",
+        "inputs": {},
+        "outputs": {
+          "hydraJobs.mergeCheck": {}
+        }
+      }
+    }
+  },
+  "inputs": {
+    "systems": ["x86_64-linux"]
+  },
+  "triggers": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/shinedog/laughing-potato",
+    "refspecs": []
+  }
+}
