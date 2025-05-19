@@ -1,5 +1,5 @@
 {
-  "project": "my-repo",
+  "project": "ai-defined",
   "description": "Hydra auto-merge system",
   "jobsets": {
     "merge-check": {
