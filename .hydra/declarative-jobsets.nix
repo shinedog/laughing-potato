@@ -3,7 +3,11 @@
 let
   pkgs = import nixpkgs {};
 
-  prs = builtins.fromJSON (builtins.readFile pulls);
+  prs = let
+  pullsFile = pulls or null;
+  pullsContents = if pullsFile == null then "{}" else builtins.readFile pullsFile;
+in builtins.fromJSON pullsContents;
+
   prJobsets =  pkgs.lib.mapAttrs (num: info:
     { enabled = 1;
       hidden = false;
