@@ -16,11 +16,6 @@
       "type": "git",
       "emailresponsible": false
     },
-    "nixpkgs": {
-      "value": "https://github.com/NixOS/nixpkgs 25.05",
-      "type": "git",
-      "emailresponsible": false
-    },
     "pulls": {
       "type": "githubpulls",
       "value": "shinedog laughing-potato",
