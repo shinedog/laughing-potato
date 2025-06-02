@@ -1,0 +1,25 @@
+{
+  "enabled": 1,
+  "hidden": false,
+  "description": "Lauging-Potato",
+  "nixexprinput": "nixexpr",
+  "nixexprpath": ".hydra/declarative-jobsets.nix",
+  "checkinterval": 60,
+  "schedulingshares": 100,
+  "enableemail": false,
+  "emailoverride": "",
+  "keepnr": 3,
+  "type": 0,
+  "inputs": {
+    "nixexpr": {
+      "value": "https://github.com/shinedog/laughing-potato declarative",
+      "type": "git",
+      "emailresponsible": false
+    },
+    "pulls": {
+      "type": "githubpulls",
+      "value": "shinedog laughing-potato",
+      "emailresponsible": false
+    }
+  }
+}
