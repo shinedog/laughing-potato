@@ -1,110 +1,21 @@
 {
-  "jobsets": {
-    "trunk": {
-      "enabled": 1,
-      "description": "Main trunk builds - always green",
-      "nixexprpath": "flake.nix",
-      "nixexprinput": "src",
-      "inputs": {
-        "src": {
-          "type": "git",
-          "value": "https://github.com/your-org/ai-defined-declarative main",
-          "emailresponsible": false
-        },
-        "nixpkgs": {
-          "type": "git", 
-          "value": "https://github.com/NixOS/nixpkgs nixos-unstable",
-          "emailresponsible": false
-        }
-      },
-      "checkinterval": 300,
-      "schedulingshares": 100,
-      "enableemail": false,
-      "emailoverride": "",
-      "keepnr": 10,
-      "hidden": false,
-      "flake": "github:your-org/ai-defined-declarative"
-    },
-    "pull-requests": {
-      "enabled": 1,
-      "description": "PR validation jobs - GitHub webhook triggered", 
-      "nixexprpath": "flake.nix",
-      "nixexprinput": "src",
-      "inputs": {
-        "src": {
-          "type": "git",
-          "value": "https://github.com/your-org/ai-defined-declarative ${HYDRA_PR_HEAD_REF}",
-          "emailresponsible": false
-        },
-        "nixpkgs": {
-          "type": "git",
-          "value": "https://github.com/NixOS/nixpkgs nixos-unstable", 
-          "emailresponsible": false
-        }
-      },
-      "checkinterval": 0,
-      "schedulingshares": 200,
-      "enableemail": true,
-      "emailoverride": "",
-      "keepnr": 5,
-      "hidden": false,
-      "flake": "github:your-org/ai-defined-declarative/${HYDRA_PR_HEAD_REF}",
-      "type": "legacy"
-    }
-  },
-  "github_integration": {
-    "webhook_url": "https://hydra.adriaanse.dev/api/push",
-    "events": ["pull_request", "push"],
-    "pr_checks": {
-      "required_status_checks": [
-        "hydra/pr-gate",
-        "hydra/pull-request/validation", 
-        "hydra/pull-request/integration",
-        "hydra/pull-request/security"
-      ],
-      "enforce_admins": true,
-      "required_pull_request_reviews": {
-        "required_approving_review_count": 1,
-        "dismiss_stale_reviews": true
-      },
-      "restrictions": null
-    }
-  },
-  "job_dependencies": {
-    "pr-gate": {
-      "depends_on": [
-        "pull-request.validation",
-        "pull-request.integration", 
-        "pull-request.security"
-      ],
-      "blocking": true,
-      "description": "Gate job that must pass before PR can be merged"
-    },
-    "trunk.build": {
-      "depends_on": [],
-      "blocking": false,
-      "description": "Main build job for trunk"
-    }
-  },
-  "notification_rules": {
-    "pr_success": {
-      "event": "job_finished",
-      "condition": "job_name == 'pr-gate' && result == 'success'",
-      "action": "github_status",
-      "message": "✅ All checks passed - PR ready to merge"
-    },
-    "pr_failure": {
-      "event": "job_finished", 
-      "condition": "job_name contains 'pull-request' && result == 'failure'",
-      "action": "github_status",
-      "message": "❌ PR checks failed - please review"
-    },
-    "trunk_broken": {
-      "event": "job_finished",
-      "condition": "job_name == 'trunk.build' && result == 'failure'", 
-      "action": "email",
-      "recipients": ["team@example.com"],
-      "message": "🚨 TRUNK IS BROKEN - Immediate attention required"
+  "trunk-build": {
+    "enabled": 1,
+    "hidden": 0,
+    "description": "Main trunk build job",
+    "nixexprinput": "src",
+    "nixexprpath": "flake.nix",
+    "checkinterval": 300,
+    "schedulingshares": 100,
+    "enableemail": 0,
+    "emailoverride": "",
+    "keepnr": 10,
+    "inputs": {
+      "src": {
+        "type": "git",
+        "value": "git+ssh://git@github.com/shinedog/laughing-potato main 1",
+        "emailresponsible": 0
+      }
     }
   }
 }
