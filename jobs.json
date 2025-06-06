@@ -1,1 +1,29 @@
-{"test":{"enabled":1,"hidden":0,"nixexprinput":"src","nixexprpath":"flake.nix","inputs":{"src":{"type":"git","value":"git+ssh://git@github.com/shinedog/laughing-potato main"}}}}
+{
+  "enabled": 1,
+  "hidden": false,
+  "description": "Builds for shinedog/laughing-potato repository",
+  "nixexprinput": "src",
+  "nixexprpath": "release.nix",
+  "checkinterval": 300,
+  "schedulingshares": 100,
+  "enableemail": false,
+  "emailoverride": "",
+  "keepnr": 10,
+  "inputs": {
+    "src": {
+      "type": "git",
+      "value": "git@github.com:shinedog/laughing-potato.git",
+      "emailresponsible": false
+    },
+    "nixpkgs": {
+      "type": "git",
+      "value": "https://github.com/NixOS/nixpkgs.git nixos-unstable",
+      "emailresponsible": false
+    },
+    "systems": {
+      "type": "nix",
+      "value": "[ \"x86_64-linux\" \"aarch64-linux\" \"x86_64-darwin\" \"aarch64-darwin\" ]",
+      "emailresponsible": false
+    }
+  }
+}
