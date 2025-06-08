@@ -1,5 +1,5 @@
 {
-    "type": 1,
+  "pull-requests": {
     "enabled": 1,
     "hidden": false,
     "description": "Builds for all branches of shinedog/laughing-potato repository",
@@ -9,11 +9,12 @@
     "enableemail": false,
     "emailoverride": "",
     "keepnr": 10,
-     "inputs": {
-        "pull_requests": {
-            "type": "githubpulls",
-            "value": "shinedog laughing-potato",
-            "emailresponsible": false
-        }
+    "inputs": {
+      "pull_requests": {
+        "type": "githubpulls",
+        "value": "shinedog laughing-potato",
+        "emailresponsible": false
+      }
     }
+  }
 }
