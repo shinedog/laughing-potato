@@ -66,14 +66,14 @@
         packages.laughing-potato = laughing-potato;
         
         # Formatter for `nix fmt`
-        formatter = pkgs.nixpkgs-fmt;
+        formatter = pkgs.alejandra;
         
         # Development shell
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             # Development tools
             git
-            nixpkgs-fmt
+            alejandra
             # Add other dev tools as needed
           ];
           
@@ -105,7 +105,7 @@
             echo "Welcome to laughing-potato development environment!"
             echo "HOME: $HOME"
             echo "Git user: $(git config --global user.name) <$(git config --global user.email)>"
-            echo "Available tools: git, nixpkgs-fmt"
+            echo "Available tools: git, alejandra"
           '';
         };
         
@@ -164,6 +164,20 @@
           build = self.packages.${system}.default;
           inherit test docs;
         }
-      );
+      ) // {
+        # Convenience aggregates for easier building
+        build-all = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ] (system:
+          self.hydraJobs.${system}.build
+        );
+        
+        test-all = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ] (system:
+          self.hydraJobs.${system}.test
+        );
+        
+        # Current system shortcuts
+        build-current = self.hydraJobs.${builtins.currentSystem}.build;
+        test-current = self.hydraJobs.${builtins.currentSystem}.test;
+        docs-current = self.hydraJobs.${builtins.currentSystem}.docs;
+      };
     };
 }
