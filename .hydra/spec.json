@@ -9,6 +9,11 @@
     "enableemail": false,
     "emailoverride": "",
     "keepnr": 10,
-    "nixExprInput": null,
-    "nixExprPath": null
+     "inputs": {
+        "pull_requests": {
+            "type": "githubpulls",
+            "value": "shinedog laughing-potato",
+            "emailresponsible": false
+        }
+    }
 }
