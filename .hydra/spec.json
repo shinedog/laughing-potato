@@ -12,7 +12,7 @@
     "inputs": {
       "pull_requests": {
         "type": "githubpulls",
-        "value": "shinedog laughing-potato",
+        "value": "shinedog laughing-potato heads",
         "emailresponsible": false
       }
     }
