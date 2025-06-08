@@ -48,6 +48,9 @@
             mkdir -p $out/bin
             # Add installation steps here
             # Example: cp binary $out/bin/
+            echo "#!/bin/bash" > $out/bin/laughing-potato
+            echo "echo 'Hello from laughing-potato!'" >> $out/bin/laughing-potato
+            chmod +x $out/bin/laughing-potato
             echo "Installing laughing-potato..."
           '';
           
@@ -164,20 +167,6 @@
           build = self.packages.${system}.default;
           inherit test docs;
         }
-      ) // {
-        # Convenience aggregates for easier building
-        build-all = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ] (system:
-          self.hydraJobs.${system}.build
-        );
-        
-        test-all = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ] (system:
-          self.hydraJobs.${system}.test
-        );
-        
-        # Current system shortcuts
-        build-current = self.hydraJobs.${builtins.currentSystem}.build;
-        test-current = self.hydraJobs.${builtins.currentSystem}.test;
-        docs-current = self.hydraJobs.${builtins.currentSystem}.docs;
-      };
+      );
     };
 }
