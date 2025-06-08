@@ -1,5 +1,6 @@
 {
   "builds": {
+    "type": 1,
     "enabled": 1,
     "hidden": false,
     "description": "Builds for all branches of shinedog/laughing-potato repository",
