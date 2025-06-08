@@ -169,8 +169,8 @@
         }
       );
       
-      # ADDED: Jobsets configuration for declarative Hydra jobsets
-      jobsets = {
+      # ADDED: Hydra jobsets derivation for declarative jobsets
+      hydraJobs.jobsets = nixpkgs.legacyPackages.x86_64-linux.writeText "jobsets.json" (builtins.toJSON {
         pull-requests = {
           enabled = 1;
           hidden = false;
@@ -189,6 +189,6 @@
             };
           };
         };
-      };
+      });
     };
 }
