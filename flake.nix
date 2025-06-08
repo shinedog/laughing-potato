@@ -168,5 +168,27 @@
           inherit test docs;
         }
       );
+      
+      # ADDED: Jobsets configuration for declarative Hydra jobsets
+      jobsets = {
+        pull-requests = {
+          enabled = 1;
+          hidden = false;
+          description = "Builds for all branches of shinedog/laughing-potato repository";
+          flake = "git+ssh://git@github.com/shinedog/laughing-potato.git";
+          checkinterval = 60;
+          schedulingshares = 100;
+          enableemail = false;
+          emailoverride = "";
+          keepnr = 10;
+          inputs = {
+            pull_requests = {
+              type = "githubpulls";
+              value = "shinedog laughing-potato";
+              emailresponsible = false;
+            };
+          };
+        };
+      };
     };
 }
