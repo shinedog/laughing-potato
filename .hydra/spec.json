@@ -1,0 +1,38 @@
+{
+  "branches": {
+    "enabled": 1,
+    "hidden": false,
+    "description": "Builds for all branches of shinedog/laughing-potato repository",
+    "flake": "git+ssh://git@github.com/shinedog/laughing-potato.git",
+    "checkinterval": 60,
+    "schedulingshares": 100,
+    "enableemail": false,
+    "emailoverride": "",
+    "keepnr": 10,
+    "inputs": {
+      "refs": {
+        "type": "github_refs",
+        "value": "shinedog laughing-potato heads - *",
+        "emailresponsible": false
+      }
+    },
+    "pulls": {
+    "enabled": 1,
+    "hidden": false,
+    "description": "Builds for all branches of shinedog/laughing-potato repository",
+    "flake": "git+ssh://git@github.com/shinedog/laughing-potato.git",
+    "checkinterval": 60,
+    "schedulingshares": 100,
+    "enableemail": false,
+    "emailoverride": "",
+    "keepnr": 10,
+    "inputs": {
+      "refs": {
+        "type": "githubpulls",
+        "value": "shinedog laughing-potato",
+        "emailresponsible": false
+      }
+    }
+  }
+  }
+}
