@@ -122,20 +122,23 @@
       }
     )
     // {
-      # Hydra-specific outputs - flat structure with job names
+      # Hydra-specific outputs - flat structure optimized for auto-discovery
       hydraJobs = 
         let
           supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
           
-          # Helper function to create jobs for a system
-          mkJobsForSystem = system: let
+          # Create jobs for each system
+          mkSystemJobs = system: let
             pkgs = nixpkgs.legacyPackages.${system};
             
+            # Main package
+            package = self.packages.${system}.default;
+            
             # Test job
-            test = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-tests-${system}";
+            tests = pkgs.stdenv.mkDerivation {
+              name = "laughing-potato-tests";
               src = ./.;
-
+              
               buildPhase = ''
                 echo "Running tests for laughing-potato on ${system}..."
                 # Add test commands here
@@ -144,6 +147,10 @@
                 # Basic validation that the package can be built
                 echo "Validating package structure..."
                 ls -la
+                
+                # Test that the built package works
+                echo "Testing package functionality..."
+                ${package}/bin/laughing-potato
               '';
 
               installPhase = ''
@@ -155,7 +162,7 @@
 
             # Documentation build
             docs = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-docs-${system}";
+              name = "laughing-potato-docs";
               src = ./.;
 
               nativeBuildInputs = with pkgs; [
@@ -172,6 +179,10 @@
                 echo "# Laughing Potato Documentation" > docs/README.md
                 echo "Built on: $(date)" >> docs/README.md
                 echo "System: ${system}" >> docs/README.md
+                echo "" >> docs/README.md
+                echo "## Package Information" >> docs/README.md
+                echo "- Name: ${package.pname}" >> docs/README.md
+                echo "- Version: ${package.version}" >> docs/README.md
               '';
 
               installPhase = ''
@@ -186,7 +197,7 @@
 
             # Format check job
             format-check = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-format-check-${system}";
+              name = "laughing-potato-format-check";
               src = ./.;
 
               nativeBuildInputs = with pkgs; [
@@ -215,18 +226,13 @@
               '';
             };
 
-          in {
-            # Create job names that Hydra expects: jobname.system
-            "build.${system}" = self.packages.${system}.default;
-            "test.${system}" = test;
-            "docs.${system}" = docs;
-            "format-check.${system}" = format-check;
-            "all-checks.${system}" = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-all-checks-${system}";
+            # Combined check job
+            check = pkgs.stdenv.mkDerivation {
+              name = "laughing-potato-check";
               
               buildInputs = [
-                self.packages.${system}.default
-                test
+                package
+                tests
                 docs
                 format-check
               ];
@@ -242,11 +248,53 @@
                 echo "Build artifacts available" >> $out/all-checks-results.txt
               '';
             };
+            
+          in {
+            # Main build job - use simple naming that Hydra expects
+            "${system}" = package;
+            "tests.${system}" = tests;
+            "docs.${system}" = docs;
+            "format-check.${system}" = format-check;
+            "check.${system}" = check;
           };
           
-          # Create all jobs for all systems and merge them
-          allJobs = nixpkgs.lib.foldl' (acc: system: acc // (mkJobsForSystem system)) {} supportedSystems;
+          # Generate jobs for all systems
+          allSystemJobs = nixpkgs.lib.fold (system: acc: 
+            acc // (mkSystemJobs system)
+          ) {} supportedSystems;
           
-        in allJobs;
+        in allSystemJobs // {
+          # Add aggregate jobs that Hydra can use
+          build = nixpkgs.lib.genAttrs supportedSystems (system: 
+            self.packages.${system}.default
+          );
+          
+          # Release job that depends on all checks
+          release = let
+            releaseSystem = "x86_64-linux";
+            pkgs = nixpkgs.legacyPackages.${releaseSystem};
+          in pkgs.stdenv.mkDerivation {
+            name = "laughing-potato-release";
+            
+            buildInputs = map (system: 
+              allSystemJobs."check.${system}"
+            ) supportedSystems;
+            
+            buildPhase = ''
+              echo "Creating release for laughing-potato..."
+              echo "All system checks have passed"
+            '';
+            
+            installPhase = ''
+              mkdir -p $out
+              echo "Release ready" > $out/release-status.txt
+              echo "Release created at: $(date)" >> $out/release-status.txt
+              
+              # Create release artifacts directory
+              mkdir -p $out/artifacts
+              echo "Release artifacts would be placed here" > $out/artifacts/README.txt
+            '';
+          };
+        };
     };
 }
