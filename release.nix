@@ -1,9 +1,8 @@
 { src }:
 
 let
-  # Use the flake's own nixpkgs instead of requiring it as input
-  flake = builtins.getFlake "path:${src}";
-  pkgs = flake.inputs.nixpkgs.legacyPackages.x86_64-linux;
+  # Use a minimal nixpkgs for basic utilities
+  pkgs = import <nixpkgs> { system = "x86_64-linux"; };
   
   # Function to create a jobset configuration
   mkJobset = name: flakeRef: {
