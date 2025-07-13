@@ -122,18 +122,18 @@
       }
     )
     // {
-      # Hydra-specific outputs that work across all systems
+      # Hydra-specific outputs - flat structure with job names
       hydraJobs = 
         let
           supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-        in
-        nixpkgs.lib.genAttrs supportedSystems (
-          system: let
+          
+          # Helper function to create jobs for a system
+          mkJobsForSystem = system: let
             pkgs = nixpkgs.legacyPackages.${system};
-
+            
             # Test job
             test = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-tests";
+              name = "laughing-potato-tests-${system}";
               src = ./.;
 
               buildPhase = ''
@@ -155,7 +155,7 @@
 
             # Documentation build
             docs = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-docs";
+              name = "laughing-potato-docs-${system}";
               src = ./.;
 
               nativeBuildInputs = with pkgs; [
@@ -186,7 +186,7 @@
 
             # Format check job
             format-check = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-format-check";
+              name = "laughing-potato-format-check-${system}";
               src = ./.;
 
               nativeBuildInputs = with pkgs; [
@@ -216,15 +216,13 @@
             };
 
           in {
-            # Main package build
-            build = self.packages.${system}.default;
-            
-            # Additional CI jobs
-            inherit test docs format-check;
-            
-            # Combined job that runs all checks
-            all-checks = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-all-checks";
+            # Create job names that Hydra expects: jobname.system
+            "build.${system}" = self.packages.${system}.default;
+            "test.${system}" = test;
+            "docs.${system}" = docs;
+            "format-check.${system}" = format-check;
+            "all-checks.${system}" = pkgs.stdenv.mkDerivation {
+              name = "laughing-potato-all-checks-${system}";
               
               buildInputs = [
                 self.packages.${system}.default
@@ -244,7 +242,11 @@
                 echo "Build artifacts available" >> $out/all-checks-results.txt
               '';
             };
-          }
-        );
+          };
+          
+          # Create all jobs for all systems and merge them
+          allJobs = nixpkgs.lib.foldl' (acc: system: acc // (mkJobsForSystem system)) {} supportedSystems;
+          
+        in allJobs;
     };
 }
