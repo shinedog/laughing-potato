@@ -1,37 +1,33 @@
-# Minimal release.nix for testing - replace your current one with this if the above still fails
-{ src, nixpkgs ? <nixpkgs> }:
+{ src, nixpkgs }:
 
 let
+  # Use the nixpkgs input directly - no <nixpkgs> reference
   pkgs = import nixpkgs { system = "x86_64-linux"; };
   
-  # Super simple build job
+  # Simple build job
   build = pkgs.stdenv.mkDerivation {
     name = "laughing-potato";
     src = src;
     
     buildPhase = ''
-      echo "Building laughing-potato from source..."
-      echo "Contents of source directory:"
-      find . -name "*.nix" -o -name "*.md" -o -name "*.json" | head -20
+      echo "Building laughing-potato..."
+      echo "Source contents:"
+      ls -la
     '';
     
     installPhase = ''
       mkdir -p $out/bin
       echo "#!/bin/bash" > $out/bin/laughing-potato
-      echo "echo 'Hello from laughing-potato built by Hydra!'" >> $out/bin/laughing-potato
+      echo "echo 'Hello from laughing-potato!'" >> $out/bin/laughing-potato
       chmod +x $out/bin/laughing-potato
-      
-      # Also create a version file
-      echo "dev-$(date +%Y%m%d)" > $out/version.txt
     '';
   };
 
 in
 {
-  # Simple job structure that Hydra can definitely handle
+  # Simple job structure
   "build.x86_64-linux" = build;
   
-  # Add a test job
   "test.x86_64-linux" = pkgs.stdenv.mkDerivation {
     name = "laughing-potato-test";
     src = src;
@@ -44,7 +40,7 @@ in
     
     installPhase = ''
       mkdir -p $out
-      echo "Test passed at $(date)" > $out/test-result.txt
+      echo "Test passed" > $out/test-result.txt
     '';
   };
 }
