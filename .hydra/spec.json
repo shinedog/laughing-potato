@@ -1,7 +1,8 @@
+# Fixed .hydra/spec.json
 {
   "enabled": 1,
   "hidden": false,
-  "description": "Declarative jobsets for shinedog/laughing-potato",
+  "description": "Declarative jobsets for shinedog/laughing-potato with auto-discovery",
   "nixexprinput": "src",
   "nixexprpath": "release.nix",
   "checkinterval": 60,
@@ -12,11 +13,11 @@
   "inputs": {
     "src": {
       "type": "git",
-      "value": "https://github.com/shinedog/laughing-potato.git main",
+      "value": "https://github.com/shinedog/laughing-potato.git",
       "emailresponsible": false
     },
     "nixpkgs": {
-      "type": "git",
+      "type": "git", 
       "value": "https://github.com/NixOS/nixpkgs.git nixos-25.05",
       "emailresponsible": false
     }
