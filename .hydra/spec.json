@@ -1,7 +1,7 @@
 {
   "enabled": 1,
   "hidden": false,
-  "description": "Declarative jobsets for shinedog/laughing-potato with auto-discovery",
+  "description": "Declarative jobsets for shinedog/laughing-potato",
   "nixexprinput": "src",
   "nixexprpath": "release.nix",
   "checkinterval": 60,
