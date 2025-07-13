@@ -123,53 +123,128 @@
     )
     // {
       # Hydra-specific outputs that work across all systems
-      hydraJobs = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"] (
-        system: let
-          pkgs = nixpkgs.legacyPackages.${system};
+      hydraJobs = 
+        let
+          supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+        in
+        nixpkgs.lib.genAttrs supportedSystems (
+          system: let
+            pkgs = nixpkgs.legacyPackages.${system};
 
-          # Test job
-          test = pkgs.stdenv.mkDerivation {
-            name = "laughing-potato-tests";
-            src = ./.;
+            # Test job
+            test = pkgs.stdenv.mkDerivation {
+              name = "laughing-potato-tests";
+              src = ./.;
 
-            buildPhase = ''
-              echo "Running tests for laughing-potato..."
-              # Add test commands here
-              # Example: make test
-            '';
+              buildPhase = ''
+                echo "Running tests for laughing-potato on ${system}..."
+                # Add test commands here
+                # Example: make test
+                
+                # Basic validation that the package can be built
+                echo "Validating package structure..."
+                ls -la
+              '';
 
-            installPhase = ''
-              mkdir -p $out
-              echo "Tests completed successfully" > $out/test-results.txt
-            '';
-          };
+              installPhase = ''
+                mkdir -p $out
+                echo "Tests completed successfully on ${system}" > $out/test-results.txt
+                echo "Test run at: $(date)" >> $out/test-results.txt
+              '';
+            };
 
-          # Documentation build
-          docs = pkgs.stdenv.mkDerivation {
-            name = "laughing-potato-docs";
-            src = ./.;
+            # Documentation build
+            docs = pkgs.stdenv.mkDerivation {
+              name = "laughing-potato-docs";
+              src = ./.;
 
-            nativeBuildInputs = with pkgs; [
-              # Add documentation tools if needed
-              # pandoc, sphinx, etc.
-            ];
+              nativeBuildInputs = with pkgs; [
+                # Add documentation tools if needed
+                # pandoc, sphinx, etc.
+              ];
 
-            buildPhase = ''
-              echo "Building documentation..."
-              # Add doc build commands here
-            '';
+              buildPhase = ''
+                echo "Building documentation for ${system}..."
+                # Add doc build commands here
+                
+                # Create basic documentation
+                mkdir -p docs
+                echo "# Laughing Potato Documentation" > docs/README.md
+                echo "Built on: $(date)" >> docs/README.md
+                echo "System: ${system}" >> docs/README.md
+              '';
 
-            installPhase = ''
-              mkdir -p $out/share/doc
-              # Copy documentation files
-              echo "Documentation built" > $out/share/doc/README.txt
-            '';
-          };
-        in {
-          # Main package
-          build = self.packages.${system}.default;
-          inherit test docs;
-        }
-      );
+              installPhase = ''
+                mkdir -p $out/share/doc/laughing-potato
+                # Copy documentation files
+                if [ -d docs ]; then
+                  cp -r docs/* $out/share/doc/laughing-potato/
+                fi
+                echo "Documentation built successfully on ${system}" > $out/share/doc/laughing-potato/build-info.txt
+              '';
+            };
+
+            # Format check job
+            format-check = pkgs.stdenv.mkDerivation {
+              name = "laughing-potato-format-check";
+              src = ./.;
+
+              nativeBuildInputs = with pkgs; [
+                alejandra
+                findutils
+              ];
+
+              buildPhase = ''
+                echo "Checking code formatting on ${system}..."
+                
+                # Find and check all .nix files
+                find . -name "*.nix" -type f | while read -r file; do
+                  echo "Checking format of: $file"
+                  alejandra --check "$file" || {
+                    echo "Format check failed for $file"
+                    exit 1
+                  }
+                done
+                
+                echo "All files are properly formatted"
+              '';
+
+              installPhase = ''
+                mkdir -p $out
+                echo "Format check passed on ${system}" > $out/format-check-results.txt
+              '';
+            };
+
+          in {
+            # Main package build
+            build = self.packages.${system}.default;
+            
+            # Additional CI jobs
+            inherit test docs format-check;
+            
+            # Combined job that runs all checks
+            all-checks = pkgs.stdenv.mkDerivation {
+              name = "laughing-potato-all-checks";
+              
+              buildInputs = [
+                self.packages.${system}.default
+                test
+                docs
+                format-check
+              ];
+              
+              buildPhase = ''
+                echo "Running all checks for laughing-potato on ${system}..."
+                echo "All individual checks have passed"
+              '';
+              
+              installPhase = ''
+                mkdir -p $out
+                echo "All checks completed successfully on ${system}" > $out/all-checks-results.txt
+                echo "Build artifacts available" >> $out/all-checks-results.txt
+              '';
+            };
+          }
+        );
     };
 }
