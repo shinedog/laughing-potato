@@ -12,7 +12,7 @@
   "inputs": {
     "src": {
       "type": "git",
-      "value": "https://github.com/shinedog/laughing-potato.git",
+      "value": "https://github.com/shinedog/laughing-potato.git main",
       "emailresponsible": false
     },
     "nixpkgs": {
