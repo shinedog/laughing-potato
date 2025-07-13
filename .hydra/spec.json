@@ -1,38 +1,24 @@
 {
-  "branches": {
-    "enabled": 1,
-    "hidden": false,
-    "description": "Builds for all branches of shinedog/laughing-potato repository",
-    "flake": "git+ssh://git@github.com/shinedog/laughing-potato.git?ref=refs/heads/${refs}",
-    "checkinterval": 60,
-    "schedulingshares": 100,
-    "enableemail": false,
-    "emailoverride": "",
-    "keepnr": 10,
-    "inputs": {
-      "refs": {
-        "type": "github_refs",
-        "value": "shinedog laughing-potato heads - *",
-        "emailresponsible": false
-      }
-    }
-  },
-  "pulls": {
-    "enabled": 1,
-    "hidden": false,
-    "description": "Builds for all pull requests of shinedog/laughing-potato repository",
-    "flake": "git+ssh://git@github.com/shinedog/laughing-potato.git?ref=refs/pull/${refs}/head",
-    "checkinterval": 60,
-    "schedulingshares": 100,
-    "enableemail": false,
-    "emailoverride": "",
-    "keepnr": 10,
-    "inputs": {
-      "refs": {
-        "type": "githubpulls",
-        "value": "shinedog laughing-potato",
-        "emailresponsible": false
-      }
+  "enabled": 1,
+  "hidden": false,
+  "description": "Declarative jobsets for shinedog/laughing-potato",
+  "nixexprinput": "src",
+  "nixexprpath": "release.nix",
+  "checkinterval": 60,
+  "schedulingshares": 100,
+  "enableemail": false,
+  "emailoverride": "",
+  "keepnr": 3,
+  "inputs": {
+    "src": {
+      "type": "git",
+      "value": "https://github.com/shinedog/laughing-potato.git",
+      "emailresponsible": false
+    },
+    "nixpkgs": {
+      "type": "git", 
+      "value": "https://github.com/NixOS/nixpkgs.git nixos-25.05",
+      "emailresponsible": false
     }
   }
 }
