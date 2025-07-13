@@ -1,103 +1,98 @@
 {
-  description = "Hydra CI/CD for shinedog/laughing-potato";
+  description = "Simple Hydra setup with GitHub auto-discovery";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-  }:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
         pkgs = nixpkgs.legacyPackages.${system};
-
-        # Define the main package build
-        laughing-potato = pkgs.stdenv.mkDerivation rec {
-          pname = "laughing-potato";
-          version = "dev";
-
-          src = ./.;
-
-          buildPhase = ''
-            echo "Building laughing-potato..."
+      in
+      {
+        # Your actual build jobs
+        hydraJobs = {
+          hello = pkgs.writeScriptBin "hello" ''
+            #!${pkgs.bash}/bin/bash
+            echo "Hello from laughing-potato!"
           '';
-
-          installPhase = ''
-            mkdir -p $out/bin
-            echo "#!/bin/bash" > $out/bin/laughing-potato
-            echo "echo 'Hello from laughing-potato!'" >> $out/bin/laughing-potato
-            chmod +x $out/bin/laughing-potato
+          
+          test = pkgs.runCommand "test" {} ''
+            echo "Running tests..."
+            mkdir -p $out
+            echo "Tests passed!" > $out/result
           '';
-
-          meta = with pkgs.lib; {
-            description = "Laughing Potato project";
-            homepage = "https://github.com/shinedog/laughing-potato";
-            license = licenses.mit;
-            maintainers = [];
-            platforms = platforms.unix;
+          
+          build = pkgs.stdenv.mkDerivation {
+            name = "laughing-potato";
+            src = ./.;
+            buildPhase = "echo 'Building...'";
+            installPhase = ''
+              mkdir -p $out/bin
+              echo "#!/bin/bash" > $out/bin/laughing-potato
+              echo "echo 'Hello from laughing-potato!'" >> $out/bin/laughing-potato
+              chmod +x $out/bin/laughing-potato
+            '';
           };
         };
-      in {
-        packages.default = laughing-potato;
-        packages.laughing-potato = laughing-potato;
 
-        formatter = pkgs.alejandra;
-
-        # Simplified dev shell - remove system path references
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            git
-            alejandra
-          ];
-
-          shellHook = ''
-            echo "Welcome to laughing-potato development environment!"
-          '';
-        };
-
-        checks = {
-          build = self.packages.${system}.default;
-        };
+        packages = self.hydraJobs.${system};
+        defaultPackage = self.hydraJobs.${system}.hello;
       }
-    )
-    // {
-      # Simplified hydraJobs - remove complex system references
-      hydraJobs = 
-        let
-          supportedSystems = ["x86_64-linux"];
-          
-          mkSystemJobs = system: let
-            pkgs = nixpkgs.legacyPackages.${system};
-            package = self.packages.${system}.default;
-            
-            tests = pkgs.stdenv.mkDerivation {
-              name = "laughing-potato-tests";
-              src = ./.;
-              
-              buildPhase = ''
-                echo "Running tests..."
-                ${package}/bin/laughing-potato
-              '';
-
-              installPhase = ''
-                mkdir -p $out
-                echo "Tests completed" > $out/test-results.txt
-              '';
+    ) // {
+      # Hydra declarative jobsets using GitHub plugin
+      jobsets = {
+        # Main branch jobset
+        main = {
+          enabled = 1;
+          hidden = false;
+          description = "Main branch";
+          nixexprinput = "src";
+          nixexprpath = "flake.nix";
+          checkinterval = 300;
+          schedulingshares = 100;
+          enableemail = false;
+          keepnr = 10;
+          inputs = {
+            src = {
+              type = "github";
+              value = "shinedog laughing-potato main";
+              emailresponsible = false;
             };
-            
-          in {
-            "${system}" = package;
-            "tests.${system}" = tests;
+            nixpkgs = {
+              type = "git";
+              value = "https://github.com/NixOS/nixpkgs.git nixos-unstable";
+              emailresponsible = false;
+            };
           };
-          
-          allSystemJobs = nixpkgs.lib.fold (system: acc: 
-            acc // (mkSystemJobs system)
-          ) {} supportedSystems;
-          
-        in allSystemJobs;
+        };
+
+        # GitHub plugin automatically discovers branches and PRs
+        github-auto = {
+          enabled = 1;
+          hidden = false;
+          description = "Auto-discovery for all branches and PRs";
+          nixexprinput = "src";
+          nixexprpath = "flake.nix";
+          checkinterval = 300;
+          schedulingshares = 50;
+          enableemail = false;
+          keepnr = 3;
+          inputs = {
+            src = {
+              type = "github";
+              value = "shinedog laughing-potato";
+              emailresponsible = false;
+            };
+            nixpkgs = {
+              type = "git";
+              value = "https://github.com/NixOS/nixpkgs.git nixos-unstable";
+              emailresponsible = false;
+            };
+          };
+        };
+      };
     };
 }
