@@ -1,15 +1,13 @@
 {
-  "main": {
-    "enabled": 1,
-    "hidden": 0,
-    "type": 1,
-    "flake": "git+ssh://git@github.com/shinedog/laughing-potato?ref=main",
-    "description": "Build laughing-potato from the main branch",
-    "checkinterval": 300,
-    "schedulingshares": 100,
-    "enableemail": 0,
-    "emailoverride": "",
-    "keepnr": 3,
-    "inputs": {}
-  }
+  "enabled": 1,
+  "hidden": 0,
+  "type": 1,
+  "description": "Generate branch jobsets for shinedog/laughing-potato",
+  "flake": "git+ssh://git@github.com/shinedog/laughing-potato?ref=5-building-a-declarative-hydra-jobset-and-jobs-from-github&dir=hydra",
+  "checkinterval": 300,
+  "schedulingshares": 100,
+  "enableemail": 0,
+  "emailoverride": "",
+  "keepnr": 3,
+  "inputs": {}
 }
