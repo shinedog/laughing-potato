@@ -1,0 +1,15 @@
+{
+  "main": {
+    "enabled": 1,
+    "hidden": 0,
+    "type": 1,
+    "flake": "git+ssh://git@github.com/shinedog/laughing-potato?ref=main",
+    "description": "Build laughing-potato from the main branch",
+    "checkinterval": 300,
+    "schedulingshares": 100,
+    "enableemail": 0,
+    "emailoverride": "",
+    "keepnr": 3,
+    "inputs": {}
+  }
+}
