@@ -63,7 +63,7 @@
             description = "Laughing Potato project";
             homepage = "https://github.com/shinedog/laughing-potato";
             license = licenses.mit; # Adjust based on actual license
-            maintainers = [];
+            maintainers = ["nick@adriaanse.dev"];
             platforms = platforms.unix;
           };
         };
@@ -142,6 +142,8 @@
               mkdir -p $out
               echo "Tests completed successfully" > $out/test-results.txt
             '';
+
+            meta.maintainers = ["nick@adriaanse.dev"];
           };
 
           # Documentation build
@@ -164,6 +166,8 @@
               # Copy documentation files
               echo "Documentation built" > $out/share/doc/README.txt
             '';
+
+            meta.maintainers = ["nick@adriaanse.dev"];
           };
         in {
           # Main package

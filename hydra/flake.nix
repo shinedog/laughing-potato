@@ -17,6 +17,7 @@
       flakeBaseUrl = "git+ssh://git@github.com/shinedog/laughing-potato";
       preferLocalBuild = true;
       allowSubstitutes = false;
+      meta.maintainers = ["nick@adriaanse.dev"];
     } ''
       git ls-remote --heads "$repoFetchUrl" \
         | awk '{ sub("refs/heads/", "", $2); print $2 }' \
