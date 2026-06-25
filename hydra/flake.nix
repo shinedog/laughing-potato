@@ -15,6 +15,8 @@
 
       repoFetchUrl = "ssh://git@github.com/shinedog/laughing-potato.git";
       flakeBaseUrl = "git+ssh://git@github.com/shinedog/laughing-potato";
+      preferLocalBuild = true;
+      allowSubstitutes = false;
     } ''
       git ls-remote --heads "$repoFetchUrl" \
         | awk '{ sub("refs/heads/", "", $2); print $2 }' \
