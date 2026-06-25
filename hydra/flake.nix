@@ -36,7 +36,7 @@
                   type: 1,
                   flake: ($flakeBaseUrl + "?ref=" + $branch),
                   description: ("Build " + $branch),
-                  checkinterval: 300,
+                  checkinterval: 60,
                   schedulingshares: 100,
                   enableemail: 0,
                   emailoverride: "",
