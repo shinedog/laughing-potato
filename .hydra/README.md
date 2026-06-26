@@ -1,19 +1,16 @@
 # Hydra configuration
 
-The root `jobsets.json` bootstraps the `.jobsets` jobset and points Hydra at the
-flake in this directory. Keep the root file while Hydra's project edit path
-cannot update an existing flake `.jobsets` row without violating its database
-constraints.
+The root `jobsets.json` bootstraps the `.jobsets` jobset and points Hydra at
+`jobsets.nix` in this directory. Keep the root file while Hydra's project edit
+path cannot update an existing flake `.jobsets` row without violating its
+database constraints.
 
-The flake generates one jobset for each branch and pull request ref returned by
-`git ls-remote`.
+The expression generates one jobset for each branch and pull request returned by
+Hydra's GitHub input plugins:
 
-This uses Git over SSH because the Hydra builder currently has repository SSH
-access. If that stops being true, switch the generator to use Hydra's GitHub
-input plugins instead:
-
-- `github_refs` for branch or tag refs
+- `github_refs` for branch refs
 - `githubpulls` for open pull requests
 
-Those plugins fetch JSON through the GitHub API, so the generator would consume
-the plugin-provided input files instead of running `git ls-remote`.
+Those plugins fetch JSON through the GitHub API during input fetching, so the
+generator build only transforms store-path JSON files and does not need network
+or SSH credentials inside the Nix build sandbox.
