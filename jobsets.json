@@ -13,7 +13,7 @@
   "inputs": {
     "src": {
       "type": "git",
-      "value": "git+ssh://git@github.com/shinedog/laughing-potato 5-building-a-declarative-hydra-jobset-and-jobs-from-github",
+      "value": "git+ssh://git@github.com/shinedog/laughing-potato main",
       "emailresponsible": false
     },
     "nixpkgs": {
