@@ -1,0 +1,13 @@
+{
+  "enabled": 1,
+  "hidden": 0,
+  "type": 1,
+  "description": "Generate branch and pull request jobsets for shinedog/laughing-potato",
+  "flake": "git+ssh://git@github.com/shinedog/laughing-potato?ref=5-building-a-declarative-hydra-jobset-and-jobs-from-github&dir=.hydra",
+  "checkinterval": 60,
+  "schedulingshares": 100,
+  "enableemail": 0,
+  "emailoverride": "",
+  "keepnr": 3,
+  "inputs": {}
+}
