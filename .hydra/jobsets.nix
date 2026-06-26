@@ -19,7 +19,12 @@ in {
       flakeBaseUrl = "git+ssh://git@github.com/shinedog/laughing-potato";
       preferLocalBuild = true;
       allowSubstitutes = false;
-      meta.maintainers = ["nick@adriaanse.dev"];
+      meta = {
+        description = "Generate Hydra jobsets for laughing-potato";
+        homepage = "https://github.com/shinedog/laughing-potato";
+        license = pkgs.lib.licenses.mit;
+        maintainers = ["nick@adriaanse.dev"];
+      };
     } ''
       jq -n \
         --slurpfile branches "$branchesJson" \

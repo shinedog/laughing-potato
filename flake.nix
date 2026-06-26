@@ -2,7 +2,7 @@
   description = "Hydra CI/CD for shinedog/laughing-potato";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -123,7 +123,7 @@
     )
     // {
       # Hydra-specific outputs that work across all systems
-      hydraJobs = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"] (
+      hydraJobs = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux"] (
         system: let
           pkgs = nixpkgs.legacyPackages.${system};
 
